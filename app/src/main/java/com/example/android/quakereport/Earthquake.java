@@ -1,7 +1,5 @@
 package com.example.android.quakereport;
 
-import java.util.Date;
-
 public class Earthquake {
 
     private String mMagnitude;
