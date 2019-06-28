@@ -6,7 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Helper methods related to requesting and receiving earthquake data from USGS.
@@ -50,14 +52,14 @@ public final class QueryUtils {
             // TODO: Parse the response given by the SAMPLE_JSON_RESPONSE string and
             // build up a list of Earthquake objects with the corresponding data.
             JSONObject root = new JSONObject(SAMPLE_JSON_RESPONSE);
-            JSONArray features = root.getJSONArray("features");
+            JSONArray featuresArray = root.getJSONArray("features");
 
-            for (int i = 0; i<features.length();i++){
-                JSONObject obj = (JSONObject) features.get(i);
+            for (int i = 0; i<featuresArray.length();i++){
+                JSONObject obj = (JSONObject) featuresArray.get(i);
                 JSONObject properties = obj.getJSONObject("properties");
                 String magnitude = properties.getString("mag");
                 String place = properties.getString("place");
-                String time = properties.getString("time");
+                long time = properties.getLong("time");
                 Earthquake currentEarthquake = new Earthquake(magnitude,place,time);
                 earthquakes.add(currentEarthquake);
             }

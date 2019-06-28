@@ -4,12 +4,12 @@ public class Earthquake {
 
     private String mMagnitude;
     private String mLocation;
-    private String mDate;
+    private long mTimeInMilliseconds;
 
-    public Earthquake(String magnitude, String location, String date){
+    public Earthquake(String magnitude, String location, long timeInMilliseconds){
         mLocation = location;
         mMagnitude = magnitude;
-        mDate = date;
+        mTimeInMilliseconds = timeInMilliseconds;
     }
 
     public String getLocation(){
@@ -22,13 +22,13 @@ public class Earthquake {
         return mMagnitude;
     }
 
-    public String getDate(){
+    public long getTimeInMilliseconds(){
 
-        return mDate;
+        return mTimeInMilliseconds;
     }
 
     @Override
     public String toString() {
-        return "Magnitude: "+mMagnitude+"Location: "+mLocation+"Date: "+mDate;
+        return "Magnitude: "+mMagnitude+"Location: "+mLocation+"Date: "+ mTimeInMilliseconds;
     }
 }
