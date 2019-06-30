@@ -1,7 +1,9 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +30,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
                     R.layout.list_item, parent, false);
         }
 
-        Earthquake currentEarthquake = getItem(position);
+        final Earthquake currentEarthquake = getItem(position);
 
         TextView magnitudeText = listItemView.findViewById(R.id.magnitude);
         DecimalFormat formatter = new DecimalFormat("0.0");
@@ -63,7 +65,10 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         listItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentEarthquake.getUrl()));
+                if (browserIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                    getContext().startActivity(browserIntent);
+                }
             }
         });
 
