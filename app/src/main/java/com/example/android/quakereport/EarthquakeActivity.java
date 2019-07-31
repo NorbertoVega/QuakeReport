@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=5&limit=20";
     private static final int EARTHQUAKE_LOADER_ID = 1;
     private EarthquakeAdapter mEarthquakeAdapter;
+    private TextView emptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +48,17 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         ListView earthquakeListView = findViewById(R.id.list);
         mEarthquakeAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
         earthquakeListView.setAdapter(mEarthquakeAdapter);
-        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID,null,this);
 
+        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID,null,this);
+        //Log.i(LOG_TAG,"Loader inicializado");
+
+        emptyStateTextView = findViewById(R.id.empty_view);
+        earthquakeListView.setEmptyView(emptyStateTextView);
     }
 
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int id, Bundle args) {
+        //Log.i(LOG_TAG,"Loader creado");
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
 
@@ -60,11 +67,14 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         mEarthquakeAdapter.clear();
         if(data != null && !data.isEmpty())
             mEarthquakeAdapter.addAll(data);
+        //Log.i(LOG_TAG,"Loader cargado");
+        emptyStateTextView.setText(R.string.no_earthquakes);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Earthquake>> loader) {
         mEarthquakeAdapter.clear();
+        //Log.i(LOG_TAG,"Loader reseteado");
     }
 
 }
