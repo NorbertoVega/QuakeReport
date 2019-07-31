@@ -16,8 +16,11 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,10 +40,11 @@ import java.util.List;
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
-    public static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=5&limit=20";
+    public static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=3&limit=25";
     private static final int EARTHQUAKE_LOADER_ID = 1;
     private EarthquakeAdapter mEarthquakeAdapter;
     private TextView emptyStateTextView;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +54,24 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         mEarthquakeAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
         earthquakeListView.setAdapter(mEarthquakeAdapter);
 
-        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID,null,this);
-        //Log.i(LOG_TAG,"Loader inicializado");
-
         emptyStateTextView = findViewById(R.id.empty_view);
         earthquakeListView.setEmptyView(emptyStateTextView);
+
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(isConnected) {
+            getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
+            //Log.i(LOG_TAG,"Loader inicializado");
+        }else{
+            mProgressBar = findViewById(R.id.progress_bar);
+            mProgressBar.setVisibility(View.GONE);
+            emptyStateTextView.setText(R.string.no_internet);
+        }
+
     }
 
     @Override
@@ -65,7 +82,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> data) {
-        ProgressBar mProgressBar = findViewById(R.id.progress_bar);
+        mProgressBar = findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.GONE);
 
         emptyStateTextView.setText(R.string.no_earthquakes);
